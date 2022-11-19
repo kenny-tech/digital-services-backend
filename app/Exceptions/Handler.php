@@ -48,14 +48,14 @@ class Handler extends ExceptionHandler
         });
     }
 
-    public function render($request, Throwable $e)
-    {
-        if ($request->expectsJson() || !$request->header('Authorization')) {
+    // public function render($request, Throwable $e)
+    // {
+    //     if ($request->expectsJson() || !$request->header('Authorization')) {
     
-            $response = ['status' => false, 'message' => 'Invalid token supplied'];
+    //         $response = ['status' => false, 'message' => 'Invalid token supplied'];
 
-            return response()->json($response, 401);
-        }
-        return redirect()->guest(route('login'));
-    }
+    //         return response()->json($response, 401);
+    //     }
+    //     return redirect()->guest(route('login'));
+    // }
 }
