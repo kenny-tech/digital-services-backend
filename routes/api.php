@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\UserController;
@@ -23,6 +22,7 @@ use App\Http\Controllers\API\ProductController;
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 Route::get('activate_account/{email}/{token}', [UserController::class, 'activateAccount']);
+Route::post('forgot_password', [UserController::class, 'forgotPassword']);
      
 Route::middleware('auth:api')->group( function () {
     Route::resource('products', ProductController::class);
