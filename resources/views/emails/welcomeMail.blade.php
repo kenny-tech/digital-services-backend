@@ -14,6 +14,8 @@
             margin: 4px 2px;
             cursor: pointer;
             background-color: #008CBA;
+            color: #fff !important;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -22,7 +24,9 @@
     <p>Hello {{ $mailData['name'] }},</p>
     <p>Thanks for creating an account on our digital services platform.</p>
     <p>Please click the button below to activate your account. </p>
-    <button class="button">Activate Your Account</button>
+    <a href={{ $mailData['link'] }} class="button">
+        Activate Your Account
+    </a>
     <br>
     <p>Thank you.</p>
 

@@ -22,6 +22,7 @@ use App\Http\Controllers\API\ProductController;
 
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
+Route::get('activate_account/{email}/{token}', [UserController::class, 'activateAccount']);
      
 Route::middleware('auth:api')->group( function () {
     Route::resource('products', ProductController::class);
