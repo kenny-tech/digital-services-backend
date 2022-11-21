@@ -23,7 +23,7 @@
    
     <p>Hello {{ $mailData['name'] }},</p>
     <p>Please click the 'Reset Password' button to reset your password.</p>
-    <p>Please note that this link will expire in 15 minutes. </p>
+    <p>Please note that this link will expire in 30 minutes. </p>
     <a href={{ $mailData['link'] }} class="button">
         Reset Password
     </a>

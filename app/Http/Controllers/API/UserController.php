@@ -35,11 +35,12 @@ class UserController extends BaseController
             $user = User::create($input);
     
             if($user != null) {
-    
+
+                $user_id = $user->id;
                 $email_token = rand(111111,999999);
-                $encrypt_email = Crypt::encryptString($email);
+                $encrypt_user_id = Crypt::encryptString($user_id);
                 $base_url = env('BASE_URL');
-                $link = $base_url.'/api/activate_account/'.$encrypt_email.'/'.$email_token;
+                $link = $base_url.'/api/activate_account/'.$encrypt_user_id.'/'.$email_token;
     
                 $data = [
                     'email_token' => $email_token,
@@ -87,17 +88,17 @@ class UserController extends BaseController
         }
     }
 
-    public function activateAccount($encrypt_email, $email_token)
+    public function activateAccount($encrypt_id, $email_token)
     {   
         try {
-            $email = Crypt::decryptString($encrypt_email);
+            $user_id = Crypt::decryptString($encrypt_id);
 
             // check if email and token exist
-            $email_token_exists = User::where('email', $email)->where('email_token', $email_token)->first();
+            $email_token_exists = User::where('id', $user_id)->where('email_token', $email_token)->first();
 
             if($email_token_exists !== null) {
                 // activate account
-                $activate_account = User::where('email', $email)->update(['active' => 1, 'email_verified_at' => Carbon::now(), 'email_token' => null]);
+                $activate_account = User::where('id', $user_id)->update(['active' => 1, 'email_verified_at' => Carbon::now(), 'email_token' => null]);
                 if($activate_account) {
                     $data = [
                         'active' => 1
@@ -120,21 +121,22 @@ class UserController extends BaseController
            $user = User::where('email', $email)->first();
            $data['email'] = $email;
 
-           $email_token = rand(111111,999999);
-           $encrypt_email = Crypt::encryptString($email);
+           $otp = rand(111111,999999);
            $base_url = env('BASE_URL');
 
            if($user != null) {
+                $user_id = $user->id;
+                $encrypt_user_id = Crypt::encryptString($user_id);
                 $name = $user->name;
-                $link = $base_url.'/api/reset_password/'.$encrypt_email.'/'.$email_token;
+                $link = $base_url.'/api/reset_password/'.$encrypt_user_id.'/'.$otp;
                 $now = Carbon::now();
-                $nowPlus15Mins = Carbon::now()->addMinutes(15);
+                $nowPlus30Mins = Carbon::now()->addMinutes(30);
 
                 $otp_data = [
-                    'email' => $email,
-                    'otp' => $email_token,
+                    'user_id' => $user_id,
+                    'otp' => $otp,
                     'start_time' => $now,
-                    'end_time' => $nowPlus15Mins,
+                    'end_time' => $nowPlus30Mins,
                 ];
 
                 UserOtp::create($otp_data);
@@ -146,21 +148,21 @@ class UserController extends BaseController
                 ];
 
                 Mail::to($email)->send(new ForgotPasswordMail($mailData));
-                return $this->sendResponse($data, 'Email exists');
+                return $this->sendResponse($data, 'A Reset Password email has been sent to you. Please follow the instruction in the email to reset your password.');
            } else {
-                return $this->sendError('Email does not exists');
+                return $this->sendError('Email does not exist');
            }
         } catch (\Exception $e) {
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
         }
     }
 
-    public function reset_password($encrypt_email, $email_token)
+    public function reset_password($encrypt_id, $otp)
     {   
         try {
 
-            $email = Crypt::decryptString($encrypt_email);
-            $userOTP = UserOtp::where('email', $email)->where('otp', $email_token)->first();
+            $user_id = Crypt::decryptString($encrypt_id);
+            $userOTP = UserOtp::where('user_id', $user_id)->where('otp', $otp)->first();
 
             if($userOTP == null) {
                 return $this->sendError('Invalid link');
@@ -174,9 +176,14 @@ class UserController extends BaseController
                 return $this->sendError('Sorry, this link has expired');
             }
 
-            UserOtp::where('email', $email)->update(['is_verified' => 1]);
-            $data['email'] = $email;
-            return $this->sendResponse($data, 'Correct link');
+            UserOtp::where('user_id', $user_id)->update(['is_verified' => 1]);
+            $email = User::where('id', $user_id)->value('email');
+
+            $data = [
+                'email' => $email
+            ];
+
+            return $this->sendResponse($data, 'Valid link');
 
         } catch (\Exception $e) {
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
