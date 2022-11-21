@@ -21,9 +21,9 @@ use App\Http\Controllers\API\ProductController;
 
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
-Route::get('activate_account/{email}/{token}', [UserController::class, 'activateAccount']);
+Route::get('activate_account/{id}/{token}', [UserController::class, 'activateAccount']);
 Route::post('forgot_password', [UserController::class, 'forgotPassword']);
-Route::get('reset_password/{email}/{token}', [UserController::class, 'reset_password']);
+Route::get('reset_password/{id}/{token}', [UserController::class, 'reset_password']);
 Route::post('reset_password', [UserController::class, 'resetPassword']);
      
 Route::middleware('auth:api')->group( function () {

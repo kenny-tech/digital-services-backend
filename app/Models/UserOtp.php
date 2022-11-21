@@ -12,7 +12,7 @@ class UserOtp extends Model
     protected $table = 'user_otp';
 
     protected $fillable = [
-        'email',
+        'user_id',
         'otp',
         'start_time',
         'end_time'
