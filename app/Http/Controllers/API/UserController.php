@@ -8,6 +8,7 @@ use App\Models\UserOtp;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ForgotPassword;
+use App\Http\Requests\ResetPassword;
 use Illuminate\Support\Facades\Auth;
 use Mail;
 use App\Mail\WelcomeMail;
@@ -149,6 +150,66 @@ class UserController extends BaseController
            } else {
                 return $this->sendError('Email does not exists');
            }
+        } catch (\Exception $e) {
+            return $this->sendError('Oops! Something went wrong '.$e->getMessage());
+        }
+    }
+
+    public function reset_password($encrypt_email, $email_token)
+    {   
+        try {
+
+            $email = Crypt::decryptString($encrypt_email);
+            $userOTP = UserOtp::where('email', $email)->where('otp', $email_token)->first();
+
+            if($userOTP == null) {
+                return $this->sendError('Invalid link');
+            } 
+
+            $now = strtotime(\Carbon\Carbon::now());
+            $end_time = strtotime(\Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $userOTP->end_time));
+            $minutesDifference = ceil(($end_time - $now) / 60);
+
+            if (($minutesDifference <= 0)) {
+                return $this->sendError('Sorry, this link has expired');
+            }
+
+            UserOtp::where('email', $email)->update(['is_verified' => 1]);
+            $data['email'] = $email;
+            return $this->sendResponse($data, 'Correct link');
+
+        } catch (\Exception $e) {
+            return $this->sendError('Oops! Something went wrong '.$e->getMessage());
+        }
+    }
+
+    public function resetPassword(ResetPassword $request)
+    {   
+        try {
+            $email = $request->email;
+            $password = $request->password;
+
+            $email_exists = User::where('email', $email)->exists();
+
+            if(!$email_exists) {
+                return $this->sendError('Email does not exist');
+            }
+
+            $data = [
+                'password' => bcrypt($password)
+            ];
+            $update_password = User::where('email', $email)->update($data);
+
+            $user_email = [
+                'email' => $email
+            ];
+
+            if($update_password) {
+                return $this->sendResponse($user_email, 'Password successfully changed.');
+            } else {
+                return $this->sendError('Unable to change password. Please try again.');
+            }
+
         } catch (\Exception $e) {
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
         }
