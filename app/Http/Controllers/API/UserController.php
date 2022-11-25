@@ -40,7 +40,7 @@ class UserController extends BaseController
                 $email_token = rand(111111,999999);
                 $encrypt_user_id = Crypt::encryptString($user_id);
                 $base_url = env('BASE_URL');
-                $link = $base_url.'/api/activate_account/'.$encrypt_user_id.'/'.$email_token;
+                $link = $base_url.'/activate-account/'.$encrypt_user_id.'/'.$email_token;
     
                 $data = [
                     'email_token' => $email_token,
@@ -93,6 +93,16 @@ class UserController extends BaseController
         try {
             $user_id = Crypt::decryptString($encrypt_id);
 
+            // check if user already activated his account
+            $active_account = User::where('id', $user_id)->where('active', 1)->first();
+
+            if($active_account !== null) {
+                $data = [
+                    'active' => 1
+                ];
+                return $this->sendResponse($data, 'Account successfully activated. Please login.');
+            }
+
             // check if email and token exist
             $email_token_exists = User::where('id', $user_id)->where('email_token', $email_token)->first();
 
@@ -103,7 +113,7 @@ class UserController extends BaseController
                     $data = [
                         'active' => 1
                     ];
-                    return $this->sendResponse($data, 'Account successfully activated');
+                    return $this->sendResponse($data, 'Account successfully activated. Please login.');
                 } else {
                     return $this->sendError('Unable to activate account. Please try again.', $data = []);
                 }
