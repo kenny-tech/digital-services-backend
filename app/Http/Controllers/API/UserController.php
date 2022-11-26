@@ -160,7 +160,7 @@ class UserController extends BaseController
                 Mail::to($email)->send(new ForgotPasswordMail($mailData));
                 return $this->sendResponse($data, 'A Reset Password email has been sent to you. Please follow the instruction in the email to reset your password.');
            } else {
-                return $this->sendError('Email does not exist');
+                return $this->sendError($email .' does not exist in our records');
            }
         } catch (\Exception $e) {
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
