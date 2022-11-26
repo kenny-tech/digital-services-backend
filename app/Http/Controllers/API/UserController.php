@@ -138,7 +138,7 @@ class UserController extends BaseController
                 $user_id = $user->id;
                 $encrypt_user_id = Crypt::encryptString($user_id);
                 $name = $user->name;
-                $link = $base_url.'/api/reset_password/'.$encrypt_user_id.'/'.$otp;
+                $link = $base_url.'/reset_password/'.$encrypt_user_id.'/'.$otp;
                 $now = Carbon::now();
                 $nowPlus30Mins = Carbon::now()->addMinutes(30);
 
@@ -158,7 +158,7 @@ class UserController extends BaseController
                 ];
 
                 Mail::to($email)->send(new ForgotPasswordMail($mailData));
-                return $this->sendResponse($data, 'A Reset Password email has been sent to you. Please follow the instruction in the email to reset your password.');
+                return $this->sendResponse($data, 'A Reset Password email has been sent to your email. Please follow the instruction in the email to reset your password.');
            } else {
                 return $this->sendError($email .' does not exist in our records');
            }
