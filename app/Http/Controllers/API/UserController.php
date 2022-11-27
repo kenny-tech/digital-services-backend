@@ -138,7 +138,7 @@ class UserController extends BaseController
                 $user_id = $user->id;
                 $encrypt_user_id = Crypt::encryptString($user_id);
                 $name = $user->name;
-                $link = $base_url.'/reset_password/'.$encrypt_user_id.'/'.$otp;
+                $link = $base_url.'/reset-password/'.$encrypt_user_id.'/'.$otp;
                 $now = Carbon::now();
                 $nowPlus30Mins = Carbon::now()->addMinutes(30);
 
