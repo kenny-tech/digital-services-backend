@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\ProviderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,7 +25,13 @@ Route::get('activate_account/{id}/{token}', [UserController::class, 'activateAcc
 Route::post('forgot_password', [UserController::class, 'forgotPassword']);
 Route::get('reset_password/{id}/{token}', [UserController::class, 'reset_password']);
 Route::post('reset_password', [UserController::class, 'resetPassword']);
+
+Route::get('get_biller_categories', [ProviderController::class, 'getBillerCategories']);
+Route::get('get_biller_by_categories', [ProviderController::class, 'getBillerByCategories']);
+Route::get('get_biller_payment_items', [ProviderController::class, 'getBillerPaymentItems']);
+Route::post('send_bill_payment_advice', [ProviderController::class, 'sendBillPaymentAdvice']);
+
      
-Route::middleware('auth:api')->group( function () {
-    Route::resource('products', ProductController::class);
-});
+// Route::middleware('auth:api')->group( function () {
+//     Route::resource('products', ProductController::class);
+// });
