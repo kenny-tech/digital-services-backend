@@ -31,6 +31,12 @@ Route::get('get_biller_by_categories', [ProviderController::class, 'getBillerByC
 Route::get('get_biller_payment_items', [ProviderController::class, 'getBillerPaymentItems']);
 Route::post('send_bill_payment_advice', [ProviderController::class, 'sendBillPaymentAdvice']);
 
+// Flutterwave
+Route::get('get_bill_categories', [ProviderController::class, 'getBillCategories']);
+Route::post('buy_airtime', [ProviderController::class, 'buyAirtime']);
+// Route::get('validate_phone_number', [ProviderController::class, 'ValidateCustomerPhoneNumber']);
+
+
      
 // Route::middleware('auth:api')->group( function () {
 //     Route::resource('products', ProductController::class);
