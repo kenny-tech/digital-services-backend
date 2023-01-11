@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ProviderController;
+use App\Http\Controllers\API\PaymentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,12 +33,13 @@ Route::get('get_biller_payment_items', [ProviderController::class, 'getBillerPay
 Route::post('send_bill_payment_advice', [ProviderController::class, 'sendBillPaymentAdvice']);
 
 // Flutterwave
-Route::get('get_bill_categories', [ProviderController::class, 'getBillCategories']);
-Route::post('buy_airtime', [ProviderController::class, 'buyAirtime']);
 // Route::get('validate_phone_number', [ProviderController::class, 'ValidateCustomerPhoneNumber']);
 
+Route::middleware('auth:api')->group( function () {
+    Route::get('get_bill_categories', [ProviderController::class, 'getBillCategories']);
+    Route::post('buy_airtime', [ProviderController::class, 'buyAirtime']);
 
-     
-// Route::middleware('auth:api')->group( function () {
-//     Route::resource('products', ProductController::class);
-// });
+    Route::get('payment/get', [PaymentController::class, 'index']);
+    Route::post('payment/create', [PaymentController::class, 'create']);
+    Route::post('payment/get-payment', [PaymentController::class, 'getPayment']);
+});
