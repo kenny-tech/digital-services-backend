@@ -14,7 +14,7 @@ class PaymentController extends BaseController
     {
         try {
            $payments = Payment::get();
-           return $payments;
+           return $this->sendResponse($payments, 'Payments successfully retrieved.');
         } catch (\Exception $e) {
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
         }

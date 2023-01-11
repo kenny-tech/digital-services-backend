@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\ProviderController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\API\AirtimeController;
+use App\Http\Controllers\API\BillController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,5 +43,11 @@ Route::middleware('auth:api')->group( function () {
 
     Route::get('payment/get', [PaymentController::class, 'index']);
     Route::post('payment/create', [PaymentController::class, 'create']);
-    Route::post('payment/get-payment', [PaymentController::class, 'getPayment']);
+    Route::post('payment/user-payment', [PaymentController::class, 'getPayment']);
+
+    Route::get('airtime/get', [AirtimeController::class, 'index']);
+    Route::post('airtime/user-airtime', [AirtimeController::class, 'getAirtime']);
+
+    Route::get('bills/get', [BillController::class, 'index']);
+    Route::post('bills/user-bills', [BillController::class, 'getBills']);
 });
