@@ -16,12 +16,16 @@ return new class extends Migration
         Schema::create('airtime_purchases', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('trans_ref');
-            $table->integer('amount');
             $table->string('phone_number');
+            $table->string('flw_ref')->nullable();
+            $table->string('reference')->nullable();
+            $table->decimal('amount');
             $table->string('network');
-            $table->enum('status', ['Successful', 'Failed']);
+            $table->string('status');
+            $table->string('tx_ref');
+            $table->unsignedBigInteger('payment_id');
             $table->foreign('user_id')->references('id')->on('users');  
+            $table->foreign('payment_id')->references('id')->on('payments');  
             $table->timestamps();
         });
     }

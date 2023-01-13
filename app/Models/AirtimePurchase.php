@@ -11,10 +11,13 @@ class AirtimePurchase extends Model
 
     protected $fillable = [
         'user_id',
-        'trans_ref',
-        'amount',
         'phone_number',
+        'flw_ref',
+        'reference',
+        'amount',
         'network',
-        'status'
+        'status',
+        'tx_ref',
+        'payment_id'
     ];
 }

@@ -10,10 +10,15 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
         'payment_title',
-        'amount',
+        'user_id',
         'status',
-        'trans_ref'
+        'tx_ref',
+        'response_code',
+        'amount',
+        'flw_ref',
+        'transaction_id',
+        'currency',
+        'payment_date'
     ];
 }
