@@ -27,8 +27,6 @@ class PaymentRequest extends FormRequest
             'user_id' => 'required',
             'payment_title' => 'required',
             'amount' => 'required',
-            'status' => 'required',
-            'trans_ref' => 'required',
         ];
     }
     
