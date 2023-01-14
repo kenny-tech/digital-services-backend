@@ -8,6 +8,7 @@ use App\Models\AirtimePurchase;
 use App\Models\BillPurchase;
 use Illuminate\Http\Request;
 use Str;
+use DB;
 
 class PaymentController extends BaseController
 {
@@ -24,6 +25,8 @@ class PaymentController extends BaseController
     public function create(PaymentRequest $request)
     {
         try {
+
+            DB::beginTransaction();
 
             $data = [
                 'payment_title' => $request->payment_title,
@@ -72,6 +75,7 @@ class PaymentController extends BaseController
                 //         'status' => $request->status,
                 //     ]);
                 // }
+                DB::commit();
             }
             if($payment != null) {
                 return $this->sendResponse($payment, 'Payment successfully created.');
@@ -80,6 +84,7 @@ class PaymentController extends BaseController
             }
         } catch (\Exception $e) {
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
+            DB::rollback();
         }
     }
 
