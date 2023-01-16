@@ -2,108 +2,119 @@
      
 namespace App\Http\Controllers\API;
 
-use Carbon\Carbon;
 use App\Http\Controllers\API\BaseController as BaseController;
+use Illuminate\Http\Request;
+use Str;
      
 class ProviderController extends BaseController
 {
-    public function getBillerCategories()
+    public function getBillCategories()
     {
-        $curlInit = curl_init();
-        curl_setopt($curlInit, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Authorization: ' . 'InterswitchAuth ' . base64_encode(env('CLIENT_ID')),
-        'Signature: ' . env('COMPUTED_SIGNATURE'), //check authentication section
-        'TimeStamp: ' . Carbon::now()->timestamp,
-        'Nonce: ' . env('COMPUTED_NONCE'), //check authentication section
-        'TerminalID: ' . env('TERMINAL_ID'),
-        'SignatureMethod: SHA1' 
+        try {
+            $token = env('FLUTTERWAVE_SECRET_KEY');
 
-        ));
+            //setup the request
+            $ch = curl_init('https://api.flutterwave.com/v3/bill-categories?airtime=1');
+            
+            // Returns the data
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            
+            //Set your auth headers
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $token
+            ));
+            
+            // get stringified data/output
+            $data = curl_exec($ch);
+            
+            // get info about the request
+            $info = curl_getinfo($ch);
+            // close curl resource to free up system resources
+            curl_close($ch);
 
-        curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlInit, CURLOPT_URL, 'https://sandbox.interswitchng.com/api/v2/quickteller/billers');
-
-        $response = curl_exec($curlInit);
-        curl_close($curlInit);
-        return $response;
+            return $data;
+        } catch (\Exception $e) {
+            return back()->with(['error' => 'Oops! Something went wrong: ' . $e->getMessage()]);
+        }
     }
 
-    public function getBillerByCategories()
+    // public function ValidateCustomerPhoneNumber(Request $request)
+    // {
+    //     try {
+
+    //         $token = env('FLUTTERWAVE_SECRET_KEY');
+
+    //         // set post fields
+    //         $post = array(
+    //             'code' => 'BIL099',
+    //             'customer' => '08098291822'
+    //         );
+
+    //         $ch = curl_init('https://api.flutterwave.com/v3/bill-items/AT099/validate');
+            
+    //         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    //          //Set your auth headers
+    //          curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    //             'Content-Type: application/json',
+    //             'Authorization: Bearer ' . $token
+    //         ));
+
+    //         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+    //         // execute!
+    //         $response = curl_exec($ch);
+
+    //         // close the connection, release resources used
+    //         curl_close($ch);
+
+    //         return $response;
+    //     } catch (\Exception $e) {
+    //         return back()->with(['error' => 'Oops! Something went wrong: ' . $e->getMessage()]);
+    //     }
+    // }
+
+    public function buyAirtime(Request $request)
     {
-        $curlInit = curl_init();
-        curl_setopt($curlInit, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Authorization: ' . 'InterswitchAuth ' . base64_encode(env('CLIENT_ID')),
-        'Signature: ' . env('COMPUTED_SIGNATURE'), //check authentication section
-        'TimeStamp: ' . Carbon::now()->timestamp,
-        'Nonce: ' . env('COMPUTED_NONCE'), //check authentication section
-        'TerminalID: ' . env('TERMINAL_ID'),
-        'SignatureMethod: SHA1' 
+        try {
 
-        ));
+            $token = env('FLUTTERWAVE_SECRET_KEY');
 
-        curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlInit, CURLOPT_URL, 'https://sandbox.interswitchng.com/api/v2/quickteller/categorys/<CATEGORY_ID>/billers');
+            $phone_number = $request->phone_number;
+            $amount = $request->amount;
 
-        $response = curl_exec($curlInit);
-        curl_close($curlInit);
-        return $response;
+            // set post fields
+            $post = array(
+                'country' => 'NG',
+                'customer' => $phone_number,
+                'amount' => $amount,
+                'type' => 'AIRTIME',
+                'reference' => Str::random(10)
+            );
+
+            $ch = curl_init('https://api.flutterwave.com/v3/bills');
+
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+             //Set your auth headers
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $token
+            ));
+
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post));
+
+            // execute!
+            $response = curl_exec($ch);
+
+            // close the connection, release resources used
+            curl_close($ch);
+
+            return json_decode($response);
+        } catch (\Exception $e) {
+            return $this->sendError('Oops! Something went wrong '.$e->getMessage());
+        }
     }
 
-    public function getBillerPaymentItems()
-    {
-        $curlInit = curl_init();
-        curl_setopt($curlInit, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Authorization: ' . 'InterswitchAuth ' . base64_encode(env('CLIENT_ID')),
-        'Signature: ' . env('COMPUTED_SIGNATURE'), //check authentication section
-        'TimeStamp: ' . Carbon::now()->timestamp,
-        'Nonce: ' . env('COMPUTED_NONCE'), //check authentication section
-        'TerminalID: ' . env('TERMINAL_ID'),
-        'SignatureMethod: SHA1' 
-
-        ));
-
-        curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlInit, CURLOPT_URL, 'https://sandbox.interswitchng.com/api/v2/quickteller/billers/<BILLER_ID>/paymentitems');
-
-        $response = curl_exec($curlInit);
-        curl_close($curlInit);
-        return $response;
-    }
-
-    public function sendBillPaymentAdvice()
-    {
-        $curlInit = curl_init();
-        curl_setopt($curlInit, CURLOPT_HTTPHEADER, array(
-        'Content-Type: application/json',
-        'Authorization: ' . 'InterswitchAuth ' . base64_encode(env('CLIENT_ID')),
-        'Signature: ' . env('COMPUTED_SIGNATURE'), //check authentication section
-        'TimeStamp: ' . Carbon::now()->timestamp,
-        'Nonce: ' . env('COMPUTED_NONCE'), //check authentication section
-        'TerminalID: ' . env('TERMINAL_ID'),
-        'SignatureMethod: SHA1' 
-        
-        ));
-        
-        curl_setopt($curlInit, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlInit, CURLOPT_URL, 'https://sandbox.interswitchng.com/api/v2/quickteller/payments/advices');
-        
-        $fieldsString = json_encode(array(
-            'customerId' => '00000000001',
-            'customerMobile' => '2348033115478',
-            'customerEmail' => 'johndoe@nomail.com',
-            'amount' => 146000,
-            'paymentCode' => '10801',
-            'requestReference' => 1453 . '' . time() //This must be preceeded by the request prefix provided by Interswitch
-        ));
-        curl_setopt($curlInit, CURLOPT_POST, true);
-        curl_setopt($curlInit, CURLOPT_POSTFIELDS, $fieldsString);
-        
-        $response = curl_exec($curlInit);
-        curl_close($curlInit);
-        return $response;
-    }
-    
 }
