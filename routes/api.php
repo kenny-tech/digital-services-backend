@@ -50,4 +50,6 @@ Route::middleware('auth:api')->group( function () {
 
     Route::get('bills/get', [BillController::class, 'index']);
     Route::post('bills/user-bills', [BillController::class, 'getBills']);
+    Route::get('get_bill_categories/cable', [ProviderController::class, 'getBillCategoriesForCableTv']);
+
 });

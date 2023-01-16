@@ -117,4 +117,36 @@ class ProviderController extends BaseController
         }
     }
 
+    public function getBillCategoriesForCableTv()
+    {
+        try {
+            $token = env('FLUTTERWAVE_SECRET_KEY');
+
+            //setup the request
+            $ch = curl_init('https://api.flutterwave.com/v3/bill-categories?cable=1');
+            
+            // Returns the data
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            
+            //Set your auth headers
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $token
+            ));
+            
+            // get stringified data/output
+            $data = curl_exec($ch);
+            
+            // get info about the request
+            $info = curl_getinfo($ch);
+            // close curl resource to free up system resources
+            curl_close($ch);
+
+            return $data;
+        } catch (\Exception $e) {
+            return back()->with(['error' => 'Oops! Something went wrong: ' . $e->getMessage()]);
+        }
+    }
+
+
 }
