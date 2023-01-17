@@ -42,7 +42,7 @@ Route::middleware('auth:api')->group( function () {
     Route::get('payment/get', [PaymentController::class, 'index']);
     Route::post('payment/create', [PaymentController::class, 'create']);
     Route::post('payment/user-payment', [PaymentController::class, 'getPayment']);
-    Route::get('payment/verify_payment', [PaymentController::class, 'verifyPayment']);
+    Route::post('payment/verify_payment', [PaymentController::class, 'verifyPayment']);
 
 
     Route::get('airtime/get', [AirtimeController::class, 'index']);

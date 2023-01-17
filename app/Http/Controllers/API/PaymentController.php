@@ -157,14 +157,15 @@ class PaymentController extends BaseController
              ));
              
              // get stringified data/output
-             $data = curl_exec($ch);
+             $response = curl_exec($ch);
              
              // get info about the request
-             $info = curl_getinfo($ch);
+            //  $info = curl_getinfo($ch);
+            
              // close curl resource to free up system resources
              curl_close($ch);
  
-             return $data;
+             return json_decode($response);
         } catch (\Exception $e) {
             return back()->with(['error' => 'Oops! Something went wrong: ' . $e->getMessage()]);
         }
