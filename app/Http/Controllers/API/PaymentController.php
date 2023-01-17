@@ -136,4 +136,37 @@ class PaymentController extends BaseController
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
         }
     }
+
+    public function verifyPayment(Request $request)
+    {
+        try {
+
+            $tx_ref = $request->tx_ref;
+
+            $token = env('FLUTTERWAVE_SECRET_KEY');
+
+            $ch = curl_init('https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref='.$tx_ref);
+            
+             // Returns the data
+             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            
+             //Set your auth headers
+             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+             'Content-Type: application/json',
+             'Authorization: Bearer ' . $token
+             ));
+             
+             // get stringified data/output
+             $data = curl_exec($ch);
+             
+             // get info about the request
+             $info = curl_getinfo($ch);
+             // close curl resource to free up system resources
+             curl_close($ch);
+ 
+             return $data;
+        } catch (\Exception $e) {
+            return back()->with(['error' => 'Oops! Something went wrong: ' . $e->getMessage()]);
+        }
+    }
 }

@@ -42,12 +42,15 @@ Route::middleware('auth:api')->group( function () {
     Route::get('payment/get', [PaymentController::class, 'index']);
     Route::post('payment/create', [PaymentController::class, 'create']);
     Route::post('payment/user-payment', [PaymentController::class, 'getPayment']);
+    Route::get('payment/verify_payment', [PaymentController::class, 'verifyPayment']);
+
 
     Route::get('airtime/get', [AirtimeController::class, 'index']);
     Route::post('airtime/user-airtime', [AirtimeController::class, 'getAirtime']);
 
     Route::get('bills/get', [BillController::class, 'index']);
     Route::post('bills/user-bills', [BillController::class, 'getBills']);
+
     Route::get('get_bill_categories/cable', [ProviderController::class, 'getBillCategoriesForCableTv']);
     Route::post('validate_customer', [ProviderController::class, 'ValidateCustomer']);
 
