@@ -11,10 +11,13 @@ class BillPurchase extends Model
 
     protected $fillable = [
         'user_id',
-        'trans_ref',
-        'amount',
         'smart_card_number',
-        'provider',
-        'status'
+        'flw_ref',
+        'reference',
+        'amount',
+        'network',
+        'status',
+        'tx_ref',
+        'payment_id'
     ];
 }
