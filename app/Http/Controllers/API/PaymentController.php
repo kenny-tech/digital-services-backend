@@ -45,35 +45,44 @@ class PaymentController extends BaseController
 
             if($request->payment_title == 'Buy Airtime') 
             {
-                $buy_airtime = $this->buyAirtime($request->phone_number, $request->amount);
+                $recharge_number = $this->rechargeNumber($request->phone_number, $request->amount, $request->payment_title, $request->biller_name);
 
-                if($buy_airtime->status == 'success') {
+                if($recharge_number->status == 'success') {
                     
                     AirtimePurchase::create([
                         'user_id' => $request->user_id,
                         'phone_number' => $request->phone_number,
-                        'flw_ref' => $buy_airtime->data->flw_ref,
-                        'reference' => $buy_airtime->data->reference,
-                        'amount' => $buy_airtime->data->amount,
-                        'network' => $buy_airtime->data->network,
-                        'status' => $buy_airtime->status,
+                        'flw_ref' => $recharge_number->data->flw_ref,
+                        'reference' => $recharge_number->data->reference,
+                        'amount' => $recharge_number->data->amount,
+                        'network' => $recharge_number->data->network,
+                        'status' => $recharge_number->status,
                         'tx_ref' => $request->tx_ref,
                         'payment_id' => $payment->id
                     ]);
                     
                 }
             } 
-            // else 
-            // {
-            //     BillPurchase::create([
-            //         'user_id' => $request->user_id,
-            //         'trans_ref' => $request->trans_ref,
-            //         'amount' => $request->amount,
-            //         'smart_card_number' => $request->smart_card_number,
-            //         'provider' => $request->provider,
-            //         'status' => $request->status,
-            //     ]);
-            // }
+            else 
+            {
+                $recharge_number = $this->rechargeNumber($request->smart_card_number, $request->amount, $request->payment_title, $request->biller_name);
+
+                if($recharge_number->status == 'success') {
+                    
+                    BillPurchase::create([
+                        'user_id' => $request->user_id,
+                        'smart_card_number' => $request->smart_card_number,
+                        'flw_ref' => $recharge_number->data->flw_ref,
+                        'reference' => $recharge_number->data->reference,
+                        'amount' => $recharge_number->data->amount,
+                        'network' => $recharge_number->data->network,
+                        'status' => $recharge_number->status,
+                        'tx_ref' => $request->tx_ref,
+                        'payment_id' => $payment->id
+                    ]);
+                    
+                }
+            }
             DB::commit();
             
             if($payment != null) {
@@ -98,18 +107,24 @@ class PaymentController extends BaseController
         }
     }
 
-    public function buyAirtime($phone_number, $amount)
+    public function rechargeNumber($number, $amount, $title, $biller_name)
     {
         try {
+
+            if($title === 'Buy Airtime') {
+                $type = 'AIRTIME';
+            } else {
+                $type = $biller_name;
+            }
 
             $token = env('FLUTTERWAVE_SECRET_KEY');
 
             // set post fields
             $post = array(
                 'country' => 'NG',
-                'customer' => $phone_number,
+                'customer' => $number,
                 'amount' => $amount,
-                'type' => 'AIRTIME',
+                'type' => $type,
                 'reference' => Str::random(10)
             );
 
