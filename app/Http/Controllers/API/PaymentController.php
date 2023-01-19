@@ -65,6 +65,7 @@ class PaymentController extends BaseController
             } 
             else 
             {
+             
                 $recharge_number = $this->rechargeNumber($request->smart_card_number, $request->amount, $request->payment_title, $request->biller_name);
 
                 if($recharge_number->status == 'success') {

@@ -38,6 +38,7 @@ Route::post('send_bill_payment_advice', [ProviderController::class, 'sendBillPay
 Route::middleware('auth:api')->group( function () {
     Route::get('get_bill_categories', [ProviderController::class, 'getBillCategories']);
     Route::post('buy_airtime', [ProviderController::class, 'buyAirtime']);
+    Route::post('pay_bills', [ProviderController::class, 'payBills']);
 
     Route::get('payment/get', [PaymentController::class, 'index']);
     Route::post('payment/create', [PaymentController::class, 'create']);
