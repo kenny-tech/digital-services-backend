@@ -14,10 +14,8 @@ class Payment extends Model
         'user_id',
         'status',
         'tx_ref',
-        'response_code',
         'amount',
         'flw_ref',
-        'transaction_id',
         'currency',
         'payment_date'
     ];

@@ -19,10 +19,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('status');
             $table->string('tx_ref');
-            $table->string('response_code');
             $table->decimal('amount');
             $table->string('flw_ref')->nullable();
-            $table->string('transaction_id');
             $table->string('currency');
             $table->string('payment_date');
             $table->foreign('user_id')->references('id')->on('users');  
