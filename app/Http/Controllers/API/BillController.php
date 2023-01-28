@@ -27,5 +27,4 @@ class BillController extends BaseController
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
         }
     }
-
 }
