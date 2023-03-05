@@ -39,7 +39,7 @@ class UserController extends BaseController
                 $user_id = $user->id;
                 $email_token = rand(111111,999999);
                 $encrypt_user_id = Crypt::encryptString($user_id);
-                $base_url = env('BASE_URL');
+                $base_url  = config('externalapi.base_url');
                 $link = $base_url.'/activate-account/'.$encrypt_user_id.'/'.$email_token;
     
                 $data = [
@@ -134,7 +134,7 @@ class UserController extends BaseController
            $data['email'] = $email;
 
            $otp = rand(111111,999999);
-           $base_url = env('BASE_URL');
+           $base_url  = config('externalapi.base_url');
 
            if($user != null) {
                 $user_id = $user->id;
