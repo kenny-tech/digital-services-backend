@@ -11,7 +11,7 @@ class ProviderController extends BaseController
     public function getBillCategories()
     {
         try {
-            $token = env('FLUTTERWAVE_SECRET_KEY');
+            $token  = config('externalapi.flutterwave_s_key');
 
             //setup the request
             $ch = curl_init('https://api.flutterwave.com/v3/bill-categories');
@@ -47,7 +47,7 @@ class ProviderController extends BaseController
             $biller_code = $request->biller_code;
             $customer = $request->customer;
 
-            $token = env('FLUTTERWAVE_SECRET_KEY');
+            $token  = config('externalapi.flutterwave_s_key');
 
             $ch = curl_init('https://api.flutterwave.com/v3/bill-items/'.$item_code.'/validate?code='.$biller_code.'&customer='.$customer);
             
@@ -78,7 +78,7 @@ class ProviderController extends BaseController
     {
         try {
 
-            $token = env('FLUTTERWAVE_SECRET_KEY');
+            $token  = config('externalapi.flutterwave_s_key');
 
             $phone_number = $request->phone_number;
             $amount = $request->amount;
@@ -120,7 +120,7 @@ class ProviderController extends BaseController
     {
         try {
 
-            $token = env('FLUTTERWAVE_SECRET_KEY');
+            $token  = config('externalapi.flutterwave_s_key');
 
             $smart_card_number = $request->smart_card_number;
             $amount = $request->amount;
@@ -161,7 +161,7 @@ class ProviderController extends BaseController
     public function getBillCategoriesForCableTv()
     {
         try {
-            $token = env('FLUTTERWAVE_SECRET_KEY');
+            $token  = config('externalapi.flutterwave_s_key');
 
             //setup the request
             $ch = curl_init('https://api.flutterwave.com/v3/bill-categories?cable=1');

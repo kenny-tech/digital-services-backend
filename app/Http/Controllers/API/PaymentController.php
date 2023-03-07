@@ -118,7 +118,7 @@ class PaymentController extends BaseController
                 $type = $biller_name;
             }
 
-            $token = env('FLUTTERWAVE_SECRET_KEY');
+            $token  = config('externalapi.flutterwave_s_key');
 
             // set post fields
             $post = array(
@@ -159,7 +159,7 @@ class PaymentController extends BaseController
 
             $tx_ref = $request->tx_ref;
 
-            $token = env('FLUTTERWAVE_SECRET_KEY');
+            $token  = config('externalapi.flutterwave_s_key');
 
             $ch = curl_init('https://api.flutterwave.com/v3/transactions/verify_by_reference?tx_ref='.$tx_ref);
             
