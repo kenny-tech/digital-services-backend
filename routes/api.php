@@ -44,8 +44,9 @@ Route::middleware('auth:api')->group( function () {
     Route::post('payment/create', [PaymentController::class, 'create']);
     Route::post('payment/user-payment', [PaymentController::class, 'getPayment']);
     Route::post('payment/verify_payment', [PaymentController::class, 'verifyPayment']);
-
-
+    Route::post('payment/create_payment_and_send_airtime', [PaymentController::class, 'createPaymentAndSendAirtime']);
+    Route::post('payment/create_payment_and_recharge_cabletv', [PaymentController::class, 'createPaymentAndRechargeCableTv']);
+    
     Route::get('airtime/get', [AirtimeController::class, 'index']);
     Route::post('airtime/user-airtime', [AirtimeController::class, 'getAirtime']);
 
