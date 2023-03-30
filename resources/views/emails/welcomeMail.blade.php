@@ -20,9 +20,9 @@
     </style>
 </head>
 <body>
-   
+
     <p>Hello {{ $mailData['name'] }},</p>
-    <p>Thanks for creating an account on our digital services platform.</p>
+    <p>Thanks for creating an account on Cakamba Digital Store.</p>
     <p>Please click the button below to activate your account. </p>
     <a href={{ $mailData['link'] }} class="button">
         Activate Your Account
