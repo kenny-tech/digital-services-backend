@@ -32,7 +32,7 @@ class WelcomeMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Cakamba Digital Services')
-        ->view('emails.welcomeMail');    
+        return $this->subject('Mail from Cakamba Digital Store')
+        ->view('emails.welcomeMail');
     }
 }

@@ -32,7 +32,7 @@ class ForgotPasswordMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Cakamba Digital Services')
-        ->view('emails.forgotPasswordMail');    
+        return $this->subject('Mail from Cakamba Digital Store')
+        ->view('emails.forgotPasswordMail');
     }
 }
