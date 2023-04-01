@@ -1,7 +1,7 @@
 <?php
-   
+
 namespace App\Http\Controllers\API;
-   
+
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\User;
 use App\Models\UserOtp;
@@ -15,7 +15,7 @@ use App\Mail\WelcomeMail;
 use App\Mail\ForgotPasswordMail;
 use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
-  
+
 class UserController extends BaseController
 {
     /**
@@ -24,16 +24,16 @@ class UserController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function register(RegisterRequest $request)
-    {   
+    {
         try {
             $input = $request->all();
             $input['password'] = bcrypt($input['password']);
-        
+
             $name = $input['name'];
             $email = $input['email'];
-    
+
             $user = User::create($input);
-    
+
             if($user != null) {
 
                 $user_id = $user->id;
@@ -41,21 +41,23 @@ class UserController extends BaseController
                 $encrypt_user_id = Crypt::encryptString($user_id);
                 $base_url  = config('externalapi.base_url');
                 $link = $base_url.'/activate-account/'.$encrypt_user_id.'/'.$email_token;
-    
+                $mail_from_address = config('externalapi.mail_from_address');
+
                 $data = [
                     'email_token' => $email_token,
                 ];
-    
+
                 User::where('email', $email)->update($data);
-    
+
                 // send welcome email
                 $mailData = [
                     'name' => $name,
-                    'link' => $link
+                    'link' => $link,
+                    'mail_from_address' => $mail_from_address,
                 ];
-                 
+
                 Mail::to($email)->send(new WelcomeMail($mailData));
-    
+
                 return $this->sendResponse($user, 'Registration successful.');
             } else {
                 return $this->sendError('Registration failed. Please try again.', $data = []);
@@ -64,7 +66,7 @@ class UserController extends BaseController
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
         }
     }
-   
+
     /**
      * Login api
      *
@@ -73,25 +75,25 @@ class UserController extends BaseController
     public function login(LoginRequest $request)
     {
         try {
-            if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'active' => 1])){ 
-                $user = Auth::user(); 
-                $success['token'] =  $user->createToken('MyApp')-> accessToken; 
+            if(Auth::attempt(['email' => $request->email, 'password' => $request->password, 'active' => 1])){
+                $user = Auth::user();
+                $success['token'] =  $user->createToken('MyApp')-> accessToken;
                 $success['name'] =  $user->name;
                 $success['email'] =  $user->email;
                 $success['user_id'] =  $user->id;
 
                 return $this->sendResponse($success, 'User login successfully.');
-            } 
-            else{ 
+            }
+            else{
                 return $this->sendError('Invalid Email/Password or Inactive account', ['error'=>'Unauthorised']);
-            } 
+            }
         } catch (\Exception $e) {
             return $this->sendError('Oops! Something went wrong '.$e->getMessage());
         }
     }
 
     public function activateAccount($encrypt_id, $email_token)
-    {   
+    {
         try {
             $user_id = Crypt::decryptString($encrypt_id);
 
@@ -126,7 +128,7 @@ class UserController extends BaseController
     }
 
     public function forgotPassword(ForgotPassword $request)
-    {   
+    {
         try {
            $email = $request->email;
            // check if email exits
@@ -143,6 +145,7 @@ class UserController extends BaseController
                 $link = $base_url.'/reset-password/'.$encrypt_user_id.'/'.$otp;
                 $now = Carbon::now();
                 $nowPlus30Mins = Carbon::now()->addMinutes(30);
+                $mail_from_address = config('externalapi.mail_from_address');
 
                 $otp_data = [
                     'user_id' => $user_id,
@@ -156,7 +159,8 @@ class UserController extends BaseController
                 // send forgot password mail
                 $mailData = [
                     'name' => $name,
-                    'link' => $link
+                    'link' => $link,
+                    'mail_from_address' => $mail_from_address,
                 ];
 
                 Mail::to($email)->send(new ForgotPasswordMail($mailData));
@@ -170,7 +174,7 @@ class UserController extends BaseController
     }
 
     public function reset_password($encrypt_id, $otp)
-    {   
+    {
         try {
 
             $user_id = Crypt::decryptString($encrypt_id);
@@ -178,7 +182,7 @@ class UserController extends BaseController
 
             if($userOTP == null) {
                 return $this->sendError('Invalid link');
-            } 
+            }
 
             $now = strtotime(\Carbon\Carbon::now());
             $end_time = strtotime(\Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $userOTP->end_time));
@@ -203,7 +207,7 @@ class UserController extends BaseController
     }
 
     public function resetPassword(ResetPassword $request)
-    {   
+    {
         try {
             $email = $request->email;
             $password = $request->password;
