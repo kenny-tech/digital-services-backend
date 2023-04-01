@@ -7,8 +7,12 @@ use App\Models\Payment;
 use App\Models\AirtimePurchase;
 use App\Models\BillPurchase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Str;
 use DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentMail;
+use App\Mail\AdminPaymentMail;
 
 class PaymentController extends BaseController
 {
@@ -82,6 +86,32 @@ class PaymentController extends BaseController
             DB::commit();
 
             if ($payment != null) {
+                $name = Auth::user()->name;
+                $email = Auth::user()->email;
+                $amount = $request->amount;
+                $mail_from_address = config('externalapi.mail_from_address');
+                // $admin_account_email = config('externalapi.admin_account_email');
+                $admin_email = 'account@cakamba.com';
+                $flw_ref = $request->flw_ref;
+
+                if ($request->payment_title == 'Buy Airtime') {
+                    $payment_title = 'Airtime';
+                } else {
+                    $payment_title = 'Cable TV Subscription';
+                }
+
+                // send welcome email
+                $mailData = [
+                    'name' => $name,
+                    'amount' => $amount,
+                    'mail_from_address' => $mail_from_address,
+                    'mail_to_address' => $admin_email,
+                    'flw_ref' => $flw_ref,
+                    'payment_title' => $payment_title,
+                ];
+
+                Mail::to($email)->send(new PaymentMail($mailData));
+                Mail::to($admin_email)->send(new AdminPaymentMail($mailData));
                 return $this->sendResponse($payment, 'Payment successfully created.');
             } else {
                 return $this->sendError('Unable to create payment. Please try again.');

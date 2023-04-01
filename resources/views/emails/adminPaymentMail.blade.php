@@ -1,23 +1,11 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Cakamba Digital Services</title>
-    <style>
-        .button {
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            background-color: #008CBA;
-            color: #fff !important;
-            cursor: pointer;
-        }
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+    <style>
         /* Global styles */
         body {
             margin: 0;
@@ -79,31 +67,21 @@
         }
     </style>
 </head>
+
 <body>
-
-
-     <!-- Header -->
-     <div class="header">
+    <!-- Header -->
+    <div class="header">
         <img src="https://digitalstore.cakamba.com/logo.jpeg" alt="Logo" class="logo">
     </div>
 
     <!-- Main content -->
     <div class="content">
-        <h1>Reset Password</h1>
-        <p>Hello {{ $mailData['name'] }},</p>
-        <p>Please click the 'Reset Password' button to reset your password.</p>
-        <p>Please note that this link will expire in 30 minutes. </p>
-        <a href={{ $mailData['link'] }} class="button">
-            Reset Password
-        </a>
-        <br>
-        <p>Thank you.</p>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <p>Contact us at {{ $mailData['mail_from_address'] }}.</p>
+        <h1>Payment Alert</h1>
+        <p>A payment of <strong>NGN{{ $mailData['amount'] }}</strong> has just been made to Cakamba Technology Limited by
+            {{ $mailData['name'] }} for {{ $mailData['payment_title'] }}.</p>
+        </p>The transaction Reference for this payment is {{ $mailData['flw_ref'] }}.</p>
     </div>
 
 </body>
+
 </html>
