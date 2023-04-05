@@ -13,6 +13,7 @@ use DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentMail;
 use App\Mail\AdminPaymentMail;
+use App\Models\DataPurchase;
 
 class PaymentController extends BaseController
 {
@@ -53,6 +54,24 @@ class PaymentController extends BaseController
                 if ($recharge_number->status == 'success') {
 
                     AirtimePurchase::create([
+                        'user_id' => $request->user_id,
+                        'phone_number' => $request->phone_number,
+                        'flw_ref' => $recharge_number->data->flw_ref,
+                        'reference' => $recharge_number->data->reference,
+                        'amount' => $recharge_number->data->amount,
+                        'network' => $recharge_number->data->network,
+                        'status' => $recharge_number->status,
+                        'tx_ref' => $request->tx_ref,
+                        'payment_id' => $payment->id
+                    ]);
+                }
+            } else if($request->payment_title == 'Buy Data') {
+
+                $recharge_number = $this->rechargeNumber($request->phone_number, $request->amount, $request->payment_title, $request->biller_name);
+
+                if ($recharge_number->status == 'success') {
+
+                    DataPurchase::create([
                         'user_id' => $request->user_id,
                         'phone_number' => $request->phone_number,
                         'flw_ref' => $recharge_number->data->flw_ref,
