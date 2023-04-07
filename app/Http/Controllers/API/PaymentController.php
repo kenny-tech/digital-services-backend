@@ -115,6 +115,8 @@ class PaymentController extends BaseController
 
                 if ($request->payment_title == 'Buy Airtime') {
                     $payment_title = 'Airtime';
+                } elseif ($request->payment_title == 'Buy Data') {
+                    $payment_title = 'Data';
                 } else {
                     $payment_title = 'Cable TV Subscription';
                 }
