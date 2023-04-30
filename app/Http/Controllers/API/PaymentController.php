@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentMail;
 use App\Mail\AdminPaymentMail;
 use App\Models\DataPurchase;
+use App\Models\ElectricityPurchase;
+use App\Models\WifiPurchase;
 
 class PaymentController extends BaseController
 {
@@ -83,7 +85,7 @@ class PaymentController extends BaseController
                         'payment_id' => $payment->id
                     ]);
                 }
-            } else {
+            } else if ($request->payment_title == 'Pay Bills') {
 
                 $recharge_number = $this->rechargeNumber($request->smart_card_number, $request->amount, $request->payment_title, $request->biller_name);
 
@@ -92,6 +94,42 @@ class PaymentController extends BaseController
                     BillPurchase::create([
                         'user_id' => $request->user_id,
                         'smart_card_number' => $request->smart_card_number,
+                        'flw_ref' => $recharge_number->data->flw_ref,
+                        'reference' => $recharge_number->data->reference,
+                        'amount' => $recharge_number->data->amount,
+                        'network' => $recharge_number->data->network,
+                        'status' => $recharge_number->status,
+                        'tx_ref' => $request->tx_ref,
+                        'payment_id' => $payment->id
+                    ]);
+                }
+            } else if ($request->payment_title == 'Payment for Electricity') {
+
+                $recharge_number = $this->rechargeNumber($request->meter_number, $request->amount, $request->payment_title, $request->biller_name);
+
+                if ($recharge_number->status == 'success') {
+
+                    ElectricityPurchase::create([
+                        'user_id' => $request->user_id,
+                        'meter_number' => $request->meter_number,
+                        'flw_ref' => $recharge_number->data->flw_ref,
+                        'reference' => $recharge_number->data->reference,
+                        'amount' => $recharge_number->data->amount,
+                        'network' => $recharge_number->data->network,
+                        'status' => $recharge_number->status,
+                        'tx_ref' => $request->tx_ref,
+                        'payment_id' => $payment->id
+                    ]);
+                }
+            } else if ($request->payment_title == 'Payment for Wifi') {
+
+                $recharge_number = $this->rechargeNumber($request->account_number, $request->amount, $request->payment_title, $request->biller_name);
+
+                if ($recharge_number->status == 'success') {
+
+                    WifiPurchase::create([
+                        'user_id' => $request->user_id,
+                        'account_number' => $request->account_number,
                         'flw_ref' => $recharge_number->data->flw_ref,
                         'reference' => $recharge_number->data->reference,
                         'amount' => $recharge_number->data->amount,
@@ -117,8 +155,12 @@ class PaymentController extends BaseController
                     $payment_title = 'Airtime';
                 } elseif ($request->payment_title == 'Buy Data') {
                     $payment_title = 'Data';
-                } else {
+                } elseif ($request->payment_title == 'Pay Bills')  {
                     $payment_title = 'Cable TV Subscription';
+                } elseif ($request->payment_title == 'Payment for Electricity')  {
+                    $payment_title = 'Electricity';
+                }  elseif ($request->payment_title == 'Payment for Wifi')  {
+                    $payment_title = 'Wifi';
                 }
 
                 // send welcome email
