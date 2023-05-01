@@ -164,7 +164,7 @@ class UserController extends BaseController
                 ];
 
                 Mail::to($email)->send(new ForgotPasswordMail($mailData));
-                return $this->sendResponse($data, 'A Reset Password email has been sent to your email. Please follow the instruction in the email to reset your password.');
+                return $this->sendResponse($data, 'A Reset Password mail has been sent to your email. Please follow the instruction in the email to reset your password.');
            } else {
                 return $this->sendError($email .' does not exist in our records');
            }
